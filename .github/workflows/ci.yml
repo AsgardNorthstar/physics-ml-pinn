@@ -1,0 +1,30 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v3
+
+    - name: Set Up Python Runtime
+      uses: actions/setup-python@v4
+      with:
+        python-node: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest numpy psutil
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Execute Test Suite
+      run: |
+        pytest tests/
