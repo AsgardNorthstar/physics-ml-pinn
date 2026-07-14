@@ -41,16 +41,6 @@ Where the projection matrix $\mathbf{B}$ is sampled from a Gaussian distribution
 $$\mathbf{B}_{ij} \sim \mathcal{N}(0, \sigma_{\text{scale}}^2)$$
 
 The standard deviation $\sigma_{\text{scale}}$ is set to align with the dominant physical frequencies of the material's thermal stress characteristics.
-[ Raw Coordinates (x,y,z) ]
-                          │
-                          ▼
-        [ Multi-Scale Fourier Projection ]  <-- Overcomes Spectral Bias
-                          │
-                          ▼
-        [ Continuous Physics Model (SciML) ]
-           /              │              \
-          ▼               ▼               ▼
-   [Temperature]   [Shear Stress]   [Displacement]
    ---
 
 ## 3. Coupling Mechanics & Anisotropic Material Laws
