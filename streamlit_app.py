@@ -5,6 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import time
 from aagjuuk_control_loop import ThermalStressController
 from aagjuuk_inverse_solver import locate_internal_defect
+from aagjuuk_online_adapter import run_online_calibration
 
 st.set_page_config(page_title="Aagjuuk Multiphysics", layout="wide")
 
@@ -25,8 +26,8 @@ else:
     cte = st.sidebar.number_input("CTE (x10^-6 / K)", value=16.5 if material_preset == "Pure Copper (Isotropic)" else 5.6)
 
 st.sidebar.write("---")
-st.sidebar.header("Advanced Inverse NDT Diagnostics")
-enable_defect_detection = st.sidebar.checkbox("Real-Time Micro-Defect Localization", value=True)
+st.sidebar.header("Self-Calibration Engine")
+online_learning_mode = st.sidebar.checkbox("Enable Live Weight-Adaptation (Online Tuning)", value=True)
 
 # Generate baseline physical grid coordinates
 num_points_axis = 10
@@ -41,58 +42,77 @@ grid_nodes = np.column_stack((x_flat, y_flat, z_flat))
 col1, col2 = st.columns([1, 2])
 
 with col1:
-    st.subheader("Dynamic Telemetry & Diagnostics")
+    st.subheader("Compute & Edge Optimizer")
     st.info("System Model Status: ACTIVE on Virtual Inference Matrix.")
     
-    st.write("### Microscopic Sub-Surface Diagnostics")
-    diagnostic_placeholder = st.empty()
-    defect_location_placeholder = st.empty()
-    confidence_placeholder = st.empty()
+    st.write("### Live Calibration Dashboard")
+    calibration_status = st.empty()
+    calibration_metric = st.empty()
     
-    if enable_defect_detection:
-        diagnostic_placeholder.success("AAGJUUK INVERSE SOLVER: ONLINE")
+    if online_learning_mode:
+        calibration_status.success("DYNAMIC SELF-CALIBRATION: STANDBY")
+        calibration_metric.metric(label="Model PDE Residual (Error)", value="0.0842", delta="Optimal Accuracy")
     else:
-        diagnostic_placeholder.warning("Inverse Solver Offline")
+        calibration_status.warning("Dynamic Calibration Offline (Model is Frozen)")
+        calibration_metric.metric(label="Model PDE Residual (Error)", value="0.5120 (Drifting)", delta="Out of Calibration")
 
-    run_sim = st.button("RUN INVERSE DIAGNOSTIC LOOP", type="primary")
+    st.write("---")
+    st.write("### Trigger Structural Drift & Fine-Tuning")
+    drift_slider = st.slider("Simulate Hardware Structural Degradation", 0.0, 1.0, 0.0, help="Simulate material wear-and-tear that causes physical drift.")
+    
+    trigger_calibration = st.button("EXECUTE ON-THE-FLY OPTIMIZATION", type="primary", disabled=not online_learning_mode)
 
 with col2:
-    st.subheader("3D Real-Time Spatial Tomography")
+    st.subheader("Dynamic Visual Model Optimization")
     plot_placeholder = st.empty()
+    chart_placeholder = st.empty()
 
-    if run_sim:
-        # 1. Simulate a hidden defect occurring deep inside the substrate at coords [0.4, 0.6, 0.3]
-        true_defect_loc = np.array([0.4, 0.6, 0.3])
+    # Base physics output
+    temp_profile = np.exp(-10 * np.sqrt((x_flat-0.5)**2 + (y_flat-0.5)**2 + (z_flat-0.5)**2))
+    displacement_factor = cte / (c11 - c12 + 1e-5)
+    disp_profile = temp_profile * np.sqrt((x_flat-0.5)**2 + (y_flat-0.5)**2 + (z_flat-0.5)**2) * displacement_factor * 2000
+
+    # If physical drift is applied, corrupt our sensor output
+    if drift_slider > 0:
+        drift_error = drift_slider * 1.85
+        disp_profile += (np.random.randn(len(x_flat)) * drift_error * 10)
+        calibration_metric.metric(label="Model PDE Residual (Error)", value=f"{0.0842 + drift_error:.4f}", delta="MODEL INACCURATE", delta_color="inverse")
+        calibration_status.error("CRITICAL ERROR: Physical Model Mismatch Detected!")
+
+    # Render main visual
+    fig = plt.figure(figsize=(10, 4.5))
+    ax1 = fig.add_subplot(121, projection='3d')
+    sc1 = ax1.scatter(x_flat, y_flat, z_flat, c=temp_profile, cmap='coolwarm', s=10, alpha=0.5)
+    ax1.set_title("Thermal Profiling")
+    
+    ax2 = fig.add_subplot(122, projection='3d')
+    sc2 = ax2.scatter(x_flat, y_flat, z_flat, c=disp_profile, cmap='plasma', s=10, alpha=0.5)
+    ax2.set_title("Structural Stress & Deflection")
+    
+    plot_placeholder.pyplot(fig)
+    plt.close(fig)
+
+    # If the user clicks calibrate, run our dynamic optimization loop
+    if trigger_calibration and drift_slider > 0:
+        calibration_status.warning("TUNING NETWORK WEIGHTS LIVE IN BROWSER...")
         
-        # Calculate mock sensor heat dissipation affected by the hidden structural defect
-        dist_from_defect = np.sqrt(np.sum((grid_nodes - true_defect_loc)**2, axis=1))
-        temp_profile = np.exp(-10 * np.sqrt((x_flat-0.5)**2 + (y_flat-0.5)**2 + (z_flat-0.5)**2))
+        # Initialize mock weight tensor and loss tracking
+        model_weights = np.random.randn(64, 64)
+        current_error = drift_slider * 1.85
+        loss_history = []
         
-        # Microscopic localized thermal anomaly caused by defect
-        temp_profile += (0.8 / (dist_from_defect + 0.15)) * (cte / 10.0)
-        
-        # 2. Feed anomaly profile to inverse engine to locate it mathematically
-        pred_loc, confidence = locate_internal_defect(temp_profile, grid_nodes, c11)
-        
-        # Render 3D Plot displaying BOTH the thermal profile and the localized defect node
-        fig = plt.figure(figsize=(10, 55 if 'axis_height' in locals() else 4.5))
-        ax = fig.add_subplot(111, projection='3d')
-        
-        # Plot continuous temperature field
-        sc = ax.scatter(x_flat, y_flat, z_flat, c=temp_profile, cmap='coolwarm', s=10, alpha=0.4)
-        
-        # Plot the exact detected defect point identified by the inverse engine
-        if enable_defect_detection and pred_loc is not None:
-            ax.scatter(pred_loc[0], pred_loc[1], pred_loc[2], color='red', s=180, marker='*', label='Detected Internal Crack/Void')
-            ax.legend(loc="upper left")
+        for step in range(15):
+            model_weights, current_error = run_online_calibration(model_weights, current_error)
+            loss_history.append(current_error + 0.0842)
             
-            defect_location_placeholder.metric(label="Predicted Defect Location (X, Y, Z)", value=f"[{pred_loc[0]:.2f}, {pred_loc[1]:.2f}, {pred_loc[2]:.2f}]")
-            confidence_placeholder.metric(label="Inverse Localization Accuracy Confidence", value=f"{confidence:.1f} %")
-        
-        ax.set_title("Volumetric State & Real-Time NDT Defect Scan")
-        fig.colorbar(sc, ax=ax, shrink=0.5, label='State Value')
-        
-        plot_placeholder.pyplot(fig)
-        plt.close(fig)
-    else:
-        st.info("Click 'RUN INVERSE DIAGNOSTIC LOOP' to simulate internal damage and trigger real-time physical tomography.")
+            # Update metric live on dashboard
+            calibration_metric.metric(label="Model PDE Residual (Error)", value=f"{current_error + 0.0842:.4f}", delta=f"-{(drift_slider*1.85 - current_error)/(drift_slider*1.85)*100:.1f}% Error")
+            
+            # Display training progression
+            with chart_placeholder.container():
+                st.write("**Gradient Descent Optimization Profile:**")
+                st.line_chart(loss_history)
+            
+            time.sleep(0.12)
+            
+        calibration_status.success("ONLINE OPTIMIZATION COMPLETE: Model fully calibrated to hardware drift!")
