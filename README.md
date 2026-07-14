@@ -77,6 +77,13 @@ The package requires a Python environment ($\ge 3.9$).
 
 ### 4.2 Installation
 To clone and install dependencies in an isolated virtual environment:
+## 4. Setup and Local Execution
+
+### 4.1 Prerequisites
+The package requires a Python environment ($\ge 3.9$). 
+
+### 4.2 Installation
+To clone and install dependencies in an isolated virtual environment:
 
 ```bash
 git clone [https://github.com/yourusername/aagjuuk.git](https://github.com/yourusername/aagjuuk.git)
