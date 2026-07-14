@@ -74,5 +74,5 @@ with col2:
         
         st.pyplot(fig)
         st.success("Real-time physical state predicted. Core convergence completed.")
-else:
+    else:
         st.info("Click the EXECUTE button to compile the edge model and evaluate physical outputs in real-time.")
