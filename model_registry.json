@@ -1,0 +1,20 @@
+{
+  "registry_version": "1.0.0",
+  "organization": "Aagjuuk Labs Inc.",
+  "active_production_models": {
+    "SOI-Silicon-Anisotropic-3D": {
+      "model_id": "aagjuuk_v1_silicon_rev4",
+      "framework": "TensorFlow SciML / DeepXDE Engine",
+      "compiled_layers": [3, 64, 64, 64, 3],
+      "loss_weights": { "pde_loss": 1.0, "boundary_loss": 10.0, "sensor_loss": 5.0 },
+      "target_hardware": "NVIDIA Jetson Orin / Industrial Edge"
+    },
+    "HBM3-Composite-Copper-Interface": {
+      "model_id": "aagjuuk_v2_copper_rev1",
+      "framework": "TensorFlow SciML / DeepXDE Engine",
+      "compiled_layers": [3, 128, 128, 128, 4],
+      "loss_weights": { "pde_loss": 2.5, "boundary_loss": 15.0, "sensor_loss": 1.0 },
+      "target_hardware": "NVIDIA H100 API Cluster"
+    }
+  }
+}
