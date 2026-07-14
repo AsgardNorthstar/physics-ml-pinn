@@ -1,0 +1,26 @@
+name: Aagjuuk Engine Integration Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-node-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install streamlit numpy matplotlib numpy-stl
+    - name: Test Suite Execution
+      run: |
+        # Assert that our custom math models compile and import cleanly
+        python -c "import numpy; print('NumPy active')"
+        python -c "from geometry_parser import parse_stl_to_nodes; print('CAD Geometry Engine active')"
