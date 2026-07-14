@@ -1,14 +1,24 @@
 # Aagjuuk Labs: Real-Time Multi-Material Edge Physics Solver
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/asgardnorthstar/aagjuuk-core/main/streamlit_app.py)
+
+**Live Demo:** [Click here to launch the interactive 3D physics dashboard](https://share.streamlit.io/asgardnorthstar/aagjuuk-core/main/streamlit_app.py) 
+*(Note: If you configured a custom URL like aagjuuk.streamlit.app, you can replace the links above with your custom domain.)*
+
+---
+
 Aagjuuk is a high-performance Physics-Informed Machine Learning (SciML) suite designed to solve complex, 3D coupled thermo-mechanical stress and deformation fields on physical hardware interfaces in under 5 milliseconds.
 
 By bypassing legacy spatial discretization grids (mesh-bound Finite Element Analysis), Aagjuuk evaluates the physical state continuously over space-time coordinates $(x, y, z, t)$.
 
 ## Repository Architecture
 
-* `models/aagjuuk_anisotropic_3d.py`: Core solver using fourth-rank anisotropic silicon stiffness tensors ($C_{11}$, $C_{12}$, $C_{44}$) to model real semiconductor lattices.
-* `aagjuuk_hybrid_pinn.py`: Hybrid physical-observational training pipeline that anchors mathematical PDEs to on-chip thermocouple data logs.
 * `streamlit_app.py`: Interactive user dashboard allowing real-time parameter tweaking and interactive 3D deformation modeling.
+* `aagjuuk_hybrid_pinn.py`: Hybrid physical-observational training pipeline that anchors mathematical PDEs to on-chip thermocouple data logs.
+* `models/aagjuuk_composite_3d.py`: Composite multi-material solver designed for Silicon-Copper interfaces.
+* `models/aagjuuk_anisotropic_3d.py`: Core solver using fourth-rank anisotropic silicon stiffness tensors ($C_{11}$, $C_{12}$, $C_{44}$) to model real semiconductor lattices.
+* `models/aagjuuk_self_adaptive_pinn.py`: Advanced custom training loop featuring dynamic, self-adaptive loss weighting to resolve the gradient pathological problem.
+* `models/aagjuuk_fourier_features.py`: Fourier Feature Projection layer designed to bypass neural network spectral bias and resolve microscopic cracks.
 
 ## Performance Profiles
 
