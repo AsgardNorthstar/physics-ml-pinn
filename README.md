@@ -2,32 +2,40 @@
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://aagjuuk.streamlit.app/)
 
-**Live Demo:** [https://aagjuuk.streamlit.app/](https://aagjuuk.streamlit.app/)
+**Production Engine Demo:** [https://aagjuuk.streamlit.app/](https://aagjuuk.streamlit.app/)
 
 ---
 
-Aagjuuk is a high-performance Physics-Informed Machine Learning (SciML) suite designed to solve complex, 3D coupled thermo-mechanical stress and deformation fields on physical hardware interfaces in under 5 milliseconds.
+Aagjuuk is an industry-first, high-performance Scientific Machine Learning (SciML) platform designed to solve coupled 3D thermo-mechanical stress and deformation fields on-the-fly (< 5ms) for advanced semiconductor packaging and microelectronics.
 
-By bypassing legacy spatial discretization grids (mesh-bound Finite Element Analysis), Aagjuuk evaluates the physical state continuously over space-time coordinates $(x, y, z, t)$.
+By bypassing traditional grid-discretization methods (mesh-bound Finite Element Analysis like ANSYS or COMSOL), Aagjuuk evaluates the continuous physical state directly over continuous space-time coordinates $(x, y, z, t)$ while enabling **Active Closed-Loop Hardware Control**, **Inverse Defect Localization**, and **Real-Time Online Model Adaptation**.
 
-## Repository Architecture
+---
 
-* `streamlit_app.py`: Interactive user dashboard allowing real-time parameter tweaking and interactive 3D deformation modeling.
-* `aagjuuk_hybrid_pinn.py`: Hybrid physical-observational training pipeline that anchors mathematical PDEs to on-chip thermocouple data logs.
-* `models/aagjuuk_composite_3d.py`: Composite multi-material solver designed for Silicon-Copper interfaces.
-* `models/aagjuuk_anisotropic_3d.py`: Core solver using fourth-rank anisotropic silicon stiffness tensors ($C_{11}$, $C_{12}$, $C_{44}$) to model real semiconductor lattices.
-* `models/aagjuuk_self_adaptive_pinn.py`: Advanced custom training loop featuring dynamic, self-adaptive loss weighting to resolve the gradient pathological problem.
-* `models/aagjuuk_fourier_features.py`: Fourier Feature Projection layer designed to bypass neural network spectral bias and resolve microscopic cracks.
+## 🚀 Key Technological Breakthroughs
 
-## Performance Profiles
+| Feature | Legacy Solutions (ANSYS/COMSOL) | Aagjuuk SciML Engine | Business Impact |
+| :--- | :--- | :--- | :--- |
+| **Inference Speed** | Minutes to Hours (Mesh-Bound) | **< 4.0 Milliseconds** | Enables real-time, on-tool defect prevention during manufacturing. |
+| **Inverse Diagnostics** | Requires physical cross-sectioning (Destructive) | **On-the-Fly 3D Localization** | Non-destructive, sub-surface crack/void mapping in real-time. |
+| **Control Integration** | Open-loop simulation only | **Active PID Laser Control** | Dynamically dials back laser/thermal power to keep stress within safe parameters. |
+| **Operational Lifespan** | Static models drift and fail over time | **Online Edge Self-Calibration** | Runs mini-gradient descent steps in-browser to adapt to structural wear. |
 
-* **Compute Latency:** < 4 milliseconds (a 10,000x speedup compared to legacy iterative mesh solvers).
-* **Target Applications:** 3D high-bandwidth memory (HBM3) thermal warpage, wafer laser annealing defect prevention, and multi-material interface shear tracking (Silicon-Copper).
+---
 
-## Quick Start
+## 📁 Repository Architecture
 
-To run the interactive Streamlit dashboard locally:
+* `streamlit_app.py`: Real-time interactive 3D control deck displaying thermal gradients, stress fields, and localized defect coordinates.
+* `aagjuuk_inverse_solver.py`: The mathematical inverse engine analyzing sensor anomalies to back-calculate 3D defect points.
+* `aagjuuk_control_loop.py`: Proportional-Integral-Derivative (PID) controller translating live stress estimations into physical laser power adjustments.
+* `aagjuuk_online_adapter.py`: Real-time SGD backpropagation routine optimizing neural weights directly in the user's browser.
+* `models/aagjuuk_anisotropic_3d.py`: Continuous 3D solver leveraging fourth-rank Silicon stiffness tensors ($C_{11}$, $C_{12}$, $C_{44}$).
+* `models/aagjuuk_self_adaptive_pinn.py`: PINN custom training loop featuring dynamic loss weighting to defeat gradient pathologies.
 
+---
+
+## 🛠️ Developer Quick Start
+
+### Install Package Dependencies
 ```bash
 pip install -r requirements.txt
-streamlit run streamlit_app.py
