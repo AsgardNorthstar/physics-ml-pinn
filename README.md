@@ -56,6 +56,13 @@ Resolves the inverse boundary value problem. By monitoring thermal telemetry ano
 ### 2.3 Closed-Loop Actuator Regulation (`aagjuuk_control_loop.py`)
 Integrates a continuous proportional-integral-derivative (PID) loop designed to dynamically regulate laser power input based on computed peak structural stress. Includes integral back-calculation (anti-windup) to prevent actuator saturation during high-amplitude transient thermal states.
 
+### 2.4 Industrial Edge-Deployment Architecture
+
+In a production semiconductor fabrication loop, Aagjuuk is deployed on an edge node adjacent to the laser processing tool. The physical data flow bypasses traditional, high-latency cloud storage:
+
+1. **Telemetry Ingestion:** High-speed optical pyrometers stream surface temperatures via EtherCAT or OPC-UA protocols.
+2. **Real-Time Inference:** The Aagjuuk API maps the 3D thermal distribution and evaluates internal shear stress at < 3.84 ms.
+3. **Actuator Regulation:** If estimated structural stress exceeds the material's critical yield point (e.g., 25 MPa), the PID loop issues an immediate analog output instruction to clamp laser power.
 ---
 
 ## 3. Operational Performance Benchmarks
