@@ -79,37 +79,12 @@ The package requires a Python environment ($\ge 3.9$).
 To clone and install dependencies in an isolated virtual environment:
 ## 4. Setup and Local Execution
 
-### 4.1 Prerequisites
-The package requires a Python environment ($\ge 3.9$). 
-
-### 4.2 Installation
-To clone and install dependencies in an isolated virtual environment:
-
-## 4. Setup and Local Execution
-
-### 4.1 Prerequisites
-The package requires a Python environment ($\ge 3.9$). 
-
-### 4.2 Installation
-To clone and install dependencies in an isolated virtual environment:
-
 ### 4.3 Running the Interactive Diagnostic Console
 Execute the visualization and hardware telemetry interface:
 
 ### 4.4 Programmatic API Integration
 To query the numerical solver within an active data-acquisition pipeline:
 
-```python
-import numpy as np
-from aagjuuk_inverse_solver import locate_internal_defect
+## 5. Licensing and Terms of Usage
 
-# Map physical coordinates
-sensor_locations = np.array([[0.1, 0.2, 0.0], [0.9, 0.8, 0.0], [0.5, 0.5, 0.0]])
-temperature_telemetry = np.array([342.1, 310.2, 389.5])
-
-# Compute 3D coordinate of internal void using anisotropic stiffness parameters (C11)
-defect_coords, confidence = locate_internal_defect(
-    sensor_temperatures=temperature_telemetry,
-    sensor_coordinates=sensor_locations,
-    stiffness_tensor=165.7
-)
+This project is licensed under the terms of the **MIT License**. For complete terms, consult the `LICENSE` file in the root directory.
