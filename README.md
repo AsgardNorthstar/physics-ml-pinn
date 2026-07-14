@@ -85,25 +85,21 @@ The package requires a Python environment ($\ge 3.9$).
 ### 4.2 Installation
 To clone and install dependencies in an isolated virtual environment:
 
-```bash
-git clone [https://github.com/yourusername/aagjuuk.git](https://github.com/yourusername/aagjuuk.git)
-cd aagjuuk
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+## 4. Setup and Local Execution
 
-4.3 Running the Interactive Diagnostic Console
+### 4.1 Prerequisites
+The package requires a Python environment ($\ge 3.9$). 
 
+### 4.2 Installation
+To clone and install dependencies in an isolated virtual environment:
+
+### 4.3 Running the Interactive Diagnostic Console
 Execute the visualization and hardware telemetry interface:
-Bash
 
-streamlit run streamlit_app.py
-
-4.4 Programmatic API Integration
-
+### 4.4 Programmatic API Integration
 To query the numerical solver within an active data-acquisition pipeline:
-Python
 
+```python
 import numpy as np
 from aagjuuk_inverse_solver import locate_internal_defect
 
@@ -117,7 +113,3 @@ defect_coords, confidence = locate_internal_defect(
     sensor_coordinates=sensor_locations,
     stiffness_tensor=165.7
 )
-
-5. Licensing and Terms of Usage
-
-This project is licensed under the terms of the MIT License. For complete terms, consult the LICENSE file in the root directory.
